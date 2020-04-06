@@ -6,6 +6,7 @@ import Bullet from "./bullet";
 import Physics from "./physics";
 import Light, { Fan } from "./miscObjects";
 import LoadMap1 from "./map1";
+import Timer from "./timer";
 
 const defaultBoxStyle = { backgroundColor: "blue" };
 const teleportStyle = { backgroundColor: "yellow" };
@@ -13,8 +14,9 @@ const springStyle = { backgroundColor: "red" };
 
 class GameState {
   // Timestamp is needed to compute positions of dynamic elements
-  constructor(mapId) {
+  constructor(mapId, physics) {
     this.mapId = mapId;
+    this.physics = physics;
     // NOTE: Timestamp is not in physics stats as it is treated separately in physics.
     this.timeStamp = 0; // represents the game absolute time (based on server)
     this.serverTimeStamp = 0;
@@ -35,18 +37,53 @@ class GameState {
     // ---------------------------------------------
 
     this.perks = {};
-    this.timers = [];
+    this.timers = []; // actual timers holder
+    this.initTimerStats = []; // used to init timer stats
     this.gameMessage = "";
     this.playerBirthPlaces = [[0, 0]];
+    this.perksCreationPlaces = [[0, 0]];
     this.lights = [];
     this.backlights = [];
     this.fan = undefined;
     this.iframeBox = undefined;
     if (mapId == "1") {
-      LoadMap1(this);
+      LoadMap1(this, this.physics.isServer());
     } else {
       //console.log("ERROR!!! MAP " + mapId + " is not supported!");
     }
+    // NOTE: Timers can only be created by server
+    if (this.physics.isServer()) this.initTimers();
+  }
+
+  initTimers() {
+    // NOTE: Timers can only be created by server. Checking here because this function can be called externally
+    if (!this.physics.isServer()) return;
+    this.timers = [];
+
+    for (let timerStat of this.initTimerStats) {
+      let timer = new Timer(
+        timerStat["timeout"],
+        this.timeStamp,
+        this.onTimerZero.bind(
+          this,
+          timerStat["id"],
+          timerStat["perk"],
+          timerStat["x"],
+          timerStat["y"]
+        )
+      );
+      this.timers.push(timer);
+    }
+  }
+
+  onTimerZero(timerId, type, x, y) {
+    if (this.timers[timerId].reset == undefined) return;
+    this.physics.perkManager.createTimerPerk(
+      type,
+      x,
+      y,
+      this.timers[timerId].reset.bind(this.timers[timerId])
+    );
   }
 
   resetPhysicsStats() {

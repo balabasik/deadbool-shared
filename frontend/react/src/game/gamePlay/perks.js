@@ -146,26 +146,13 @@ class Perk {
 }
 
 class PerkManager {
-  constructor(mapId, onNewPerks, physics) {
-    // TODO: make it per map
+  constructor(onNewPerks, physics) {
     this.perks = {};
-    this.mapId = mapId;
     this.onNewPerks = onNewPerks;
     this.physics = physics;
 
-    // perks are managed by the server
-    // TODO: Creation places should be on per map basis
-    this.creationPlaces = [
-      [4835, 450], // basement near car
-      [2114, 480], // basement bricks
-      [1650, 1100], // 1st floor above aquarium
-      [4180, 1350], // 1st floor fire
-      [2430, 1700], // 1st floor tv
-      [1600, 2350], // 1st floor lamp 1
-      [3200, 2350], // 1st floor lamp 2
-      [10, 3100], // attic toilet
-      [2550, 3100] // attic checkout
-    ];
+    // NOTE: Perks are managed by the server
+    this.creationPlaces = physics.state.perkCreationPlaces;
     this.freePlaces = {};
     for (let i = 0; i < this.creationPlaces.length; i++)
       this.freePlaces[i] = true;
@@ -233,7 +220,7 @@ class PerkManager {
     this.onNewPerks(this.perks);
   }
 
-  // perk that supports countdown
+  // Perk that supports countdown
   createTimerPerk(type, x, y, onCapture) {
     let id = RandomString();
     let place = -1;

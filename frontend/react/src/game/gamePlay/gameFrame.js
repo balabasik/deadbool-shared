@@ -668,7 +668,6 @@ class GameWorld extends Component {
         <img
           src={this.props.gameState.mapStyle.front}
           style={{
-            // TODO: Style has to be set in gameState per map basis.
             ...worldBgStyle,
             position: "absolute",
             backgroundSize: "cover",

@@ -157,7 +157,7 @@ function getBoxBgStyle(imgSrc) {
   };
 }
 
-function LoadMap1(state) {
+function LoadMap1(state, isServer) {
   // General map attributes
   state.worldWidth = 5000;
   state.worldHeight = 3250;
@@ -185,6 +185,18 @@ function LoadMap1(state) {
     [0, 2600], // attic near toilet2
     [1950, 2790], // attic sofa
     [4900, 2600] // attic near ikea bed
+  ];
+
+  state.perkCreationPlaces = [
+    [4835, 450], // basement near car
+    [2114, 480], // basement bricks
+    [1650, 1100], // 1st floor above aquarium
+    [4180, 1350], // 1st floor fire
+    [2430, 1700], // 1st floor tv
+    [1600, 2350], // 1st floor lamp 1
+    [3200, 2350], // 1st floor lamp 2
+    [10, 3100], // attic toilet
+    [2550, 3100] // attic checkout
   ];
 
   // Mover above fridge
@@ -515,7 +527,10 @@ function LoadMap1(state) {
       18 /*radius*/,
       1550,
       2264,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -524,7 +539,10 @@ function LoadMap1(state) {
       19 /*radius*/,
       1604,
       2256,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -533,7 +551,10 @@ function LoadMap1(state) {
       22 /*radius*/,
       1669,
       2248,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -542,7 +563,10 @@ function LoadMap1(state) {
       42 /*radius*/,
       1750,
       2240,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -551,7 +575,10 @@ function LoadMap1(state) {
       22 /*radius*/,
       1825,
       2248,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -560,7 +587,10 @@ function LoadMap1(state) {
       20 /*radius*/,
       1892,
       2256,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -569,7 +599,10 @@ function LoadMap1(state) {
       17 /*radius*/,
       1953,
       2264,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -579,7 +612,10 @@ function LoadMap1(state) {
       18 /*radius*/,
       1750 + 1575 + 1750 - 1550,
       2264,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -588,7 +624,10 @@ function LoadMap1(state) {
       19 /*radius*/,
       1750 + 1575 + 1750 - 1604,
       2256,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -597,7 +636,10 @@ function LoadMap1(state) {
       22 /*radius*/,
       1750 + 1575 + 1750 - 1669,
       2248,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -606,7 +648,10 @@ function LoadMap1(state) {
       42 /*radius*/,
       1750 + 1575,
       2240,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -615,7 +660,10 @@ function LoadMap1(state) {
       22 /*radius*/,
       1750 + 1575 + 1750 - 1825,
       2248,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -624,7 +672,10 @@ function LoadMap1(state) {
       20 /*radius*/,
       1750 + 1575 + 1750 - 1892,
       2256,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -633,7 +684,10 @@ function LoadMap1(state) {
       17 /*radius*/,
       1750 + 1575 + 1750 - 1953,
       2264,
-      [{ color: colorOn, time: 2500 }, { color: colorOff, time: 500 }],
+      [
+        { color: colorOn, time: 2500 },
+        { color: colorOff, time: 500 }
+      ],
       state.timeStamp
     )
   );
@@ -923,8 +977,8 @@ function LoadMap1(state) {
     { wall: true }
   );
   // --------------------------
-
   // washing timer
+  let timer1 = { id: 0, timeout: 40000, perk: "quad", x: 31, y: 520 };
   let digi2 = state.createDigitalClock(
     Object.keys(state.boxes).length,
     185, // x
@@ -934,10 +988,11 @@ function LoadMap1(state) {
     srcMap1DigiClock1,
     0 // timerId
   );
-
   state.boxes[digi2.stats.id] = digi2;
+  state.initTimerStats.push(timer1);
 
   // bed timer
+  let timer2 = { id: 1, timeout: 40000, perk: "skull", x: 4810, y: 3130 };
   let ana1 = state.createAnalogClock(
     Object.keys(state.boxes).length,
     4300, // x
@@ -947,6 +1002,7 @@ function LoadMap1(state) {
     1 // timerId
   );
   state.boxes[ana1.stats.id] = ana1;
+  state.initTimerStats.push(timer2);
 
   // analog clock
   let ana2 = state.createAnalogClock(
@@ -1170,7 +1226,10 @@ function LoadMap1(state) {
       10 /*radius*/,
       4800 - 1,
       290,
-      [{ color: color1, time: per }, { color: color2, time: per * 5 }],
+      [
+        { color: color1, time: per },
+        { color: color2, time: per * 5 }
+      ],
       state.timeStamp
     )
   );

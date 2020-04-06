@@ -140,7 +140,7 @@ class Physics {
     }
 
     // NOTE: By this time hostId has been set already
-    if (!this.isClient || this.isHost()) {
+    if (this.isServer()) {
       this.initServerManagers();
       this.initComplete = true;
       // For server we directly call onready as long as constructor finished
@@ -154,47 +154,13 @@ class Physics {
   }
 
   initServerManagers() {
-    this.perkManager = new PerkManager(
-      this.state.mapId,
-      this.onNewPerks.bind(this),
-      this
-    );
+    this.perkManager = new PerkManager(this.onNewPerks.bind(this), this);
     this.messageManager = new MessageManager();
   }
 
   destroyServerManagers() {
     delete this.perkManager;
     delete this.messageManager;
-  }
-
-  initTimers(mapId) {
-    if (this.isClient && !this.isHost()) return;
-    if (mapId != 1 && mapId != "1") return; // only handle Map1 for now
-    // TODO: Need to do it on per map basis, and in sync with boxes in gameState.
-    this.state.timers = [];
-    let timer1 = new Timer(
-      40000,
-      this.state.timeStamp,
-      this.onTimerZero.bind(this, 0, "quad", 31, 520)
-    );
-    this.state.timers.push(timer1);
-
-    let timer2 = new Timer(
-      40000,
-      this.state.timeStamp,
-      this.onTimerZero.bind(this, 1, "skull", 4810, 3130)
-    );
-    this.state.timers.push(timer2);
-  }
-
-  onTimerZero(timerId, type, x, y) {
-    if (this.state.timers[timerId].reset == undefined) return;
-    this.perkManager.createTimerPerk(
-      type,
-      x,
-      y,
-      this.state.timers[timerId].reset.bind(this.state.timers[timerId])
-    );
   }
 
   onNewPerks(perks) {
@@ -215,7 +181,7 @@ class Physics {
     if (hostId == this.state.thisPlayer) {
       //console.log("We are the host.");
       this.initServerManagers();
-      this.initTimers(this.state.mapId);
+      this.state.initTimers();
       // NOTE: Resetting physics stats, but keep youtube link info and game status
       let oldStatus = this.state.physicsStats.gameStatus;
       let oldYoutube = this.state.physicsStats.youtube;
@@ -235,10 +201,14 @@ class Physics {
     }
   }
 
+  isServer() {
+    return !this.isClient || this.isHost();
+  }
+
   stop() {
     // TODO: Disconnect the socket.
     delete this.serverStateFetcher;
-    if (!this.isClient || this.isHost()) this.perkManager.stop();
+    if (this.isServer()) this.perkManager.stop();
     this.stopped = true;
   }
 
@@ -274,7 +244,7 @@ class Physics {
       this.playerDistanceMap[key][playerId] = 0;
     this.playerDistanceMap[playerId] = { playerId: 0 };
 
-    if (!this.isClient || this.isHost()) {
+    if (this.isServer()) {
       if (Object.keys(this.state.players).length == 1) {
         // First player
         this.state.physicsStats.youtube.activeYoutubePlayer = playerId;
@@ -291,7 +261,7 @@ class Physics {
 
   removePlayerFromState(playerId) {
     if (this.state.players[playerId] == undefined) return;
-    if (!this.isClient || this.isHost()) {
+    if (this.isServer()) {
       //console.log(playerId, this.state.players[playerId].stats.isCopy.active);
       if (!this.state.players[playerId].stats.isCopy.active)
         this.messageManager.createMessage(
@@ -309,7 +279,7 @@ class Physics {
 
     // Reevaluate youtube link if player leaves
     if (
-      (!this.isClient || this.isHost()) &&
+      this.isServer() &&
       this.state.physicsStats.youtube.activeYoutubePlayer == playerId &&
       Object.keys(this.state.players).length > 0
     ) {
@@ -321,9 +291,9 @@ class Physics {
   }
 
   loadMap(mapId) {
-    this.state = new GameState(mapId);
+    this.state = new GameState(mapId, this);
     this.state.gameOptions = this.initState.gameOptions;
-    this.initTimers(mapId);
+    this.state.initTimers();
     this.initTime = GetTime();
     this.realInitTime = this.initTime;
 
@@ -404,7 +374,8 @@ class Physics {
     //console.log(keys, this.watchOnly);
     if (
       this.isClient &&
-      (playerId == this.state.thisPlayer && !this.watchOnly) &&
+      playerId == this.state.thisPlayer &&
+      !this.watchOnly &&
       remote == true
     )
       return true; // do not set our own keys
@@ -475,6 +446,7 @@ class Physics {
   }
 
   isHost() {
+    if (this.state == undefined) return false;
     /*console.log(
       this.state.hostId,
       this.state.thisPlayer,
@@ -515,7 +487,7 @@ class Physics {
         false /* remote */
       );
 
-    if (!this.isClient || this.isHost()) {
+    if (this.isServer()) {
       // Record players that were dead before the update
       for (let key in this.state.playerKeys) {
         let player = this.state.players[key];
@@ -555,7 +527,7 @@ class Physics {
     if (this.isClient && this.isHost())
       this.serverStateFetcher.sendState(this.state);
 
-    if (!this.isClient || this.isHost()) {
+    if (this.isServer()) {
       // Forces the clients geometry for some time
       // NOTE: To always force comment this out.
       for (let key in this.state.players) {
@@ -890,7 +862,7 @@ class Physics {
         // TODO: Should we only reevaluate on server?
         this.reevaluateYoutubeLink();
         // NOTE: Only reevaluating avatars on server
-        if (!this.isClient || this.isHost()) this.reevaluateAvatars();
+        if (this.isServer()) this.reevaluateAvatars();
         this.state.physicsStats.youtube.activeYoutubeTimer = 60000; // should be in sync with gameState
       }
 
@@ -900,7 +872,7 @@ class Physics {
         this.moveBullets(newTimeStamp);
 
       // Spells that are performed only on server
-      if (!this.isClient || this.isHost()) {
+      if (this.isServer()) {
         this.updatePlayerDistanceMap();
         this.deadbeefUpdateState(elapsedTime);
         this.evaluatePassiveSpells(elapsedTime);
@@ -1276,11 +1248,7 @@ class Physics {
   tryFire(player, newTimeStamp, keys) {
     // TODO: Should player be revived by server command?
     // What if there is a resurrection timeout?
-    if (
-      (!this.isClient || this.isHost()) &&
-      keys.leftClick &&
-      player.stats.isDead
-    ) {
+    if (this.isServer() && keys.leftClick && player.stats.isDead) {
       this.revivePlayer(player, newTimeStamp);
       return;
     }
@@ -1391,8 +1359,7 @@ class Physics {
     this.state.bullets[bullet.stats.id] = bullet;
 
     // These will be passed to the client instead of all of them
-    if (!this.isClient || this.isHost())
-      this.state.physicsStats.newBullets.push(bullet);
+    if (this.isServer()) this.state.physicsStats.newBullets.push(bullet);
   }
 
   moveBullets(newTimeStamp) {
@@ -1611,7 +1578,7 @@ class Physics {
 
       let player = this.state.players[key];
       // Probability to dodge
-      if ((!this.isClient || this.isHost()) && player.dodgeBullet()) continue;
+      if (this.isServer() && player.dodgeBullet()) continue;
       // Intersect
       if (
         !player.stats.reflectsBullets &&
@@ -1844,8 +1811,8 @@ class Physics {
             player.getLeftX() >= curBoxRightX ||
             player.getRightX() <= curBoxLeftX
           ) &&
-          (curBoxTopY <= player.getBottomY() &&
-            newBoxTopY >= player.getBottomY())
+          curBoxTopY <= player.getBottomY() &&
+          newBoxTopY >= player.getBottomY()
         ) {
           player.stats.intendedMoveY = newBoxTopY - player.getBottomY();
           this.tryMovePlayer(player);
@@ -2182,16 +2149,16 @@ class Physics {
     if (
       forceGeometry ||
       this.state.players[playerId].syncGeometryPending == true ||
-      (prob < 2 ||
-        (prob > 90 &&
-          (this.isGeometryVeryDifferent(upperStats, {
-            x: keys.clientX,
-            y: keys.clientY
-          }) ||
-            this.isSpeedVeryDifferent(upperStats, {
-              speedX: keys.clientSpeedX,
-              speedY: keys.clientSpeedY
-            }))))
+      prob < 2 ||
+      (prob > 90 &&
+        (this.isGeometryVeryDifferent(upperStats, {
+          x: keys.clientX,
+          y: keys.clientY
+        }) ||
+          this.isSpeedVeryDifferent(upperStats, {
+            speedX: keys.clientSpeedX,
+            speedY: keys.clientSpeedY
+          })))
     ) {
       // If player is touching floor, or geometry is forced we apply it, or in ranodm rare case
       if (

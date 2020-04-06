@@ -296,7 +296,6 @@ class GamePlay extends Component {
   }
 
   onReady() {
-    // TODO: Modify it per map.
     this.updateDimensions();
     // FIXME: It is not really helping at all, so we disable it.
     //this.preloadMap1Resources();
