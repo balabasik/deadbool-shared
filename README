@@ -1,0 +1,30 @@
+All deadbool repos.
+
+Folders have to be called explicitly as below because monitor service checks corresponding git hashes:
+"backend",
+"frontend",
+"operator".
+Above sources are enough to run the full application.
+
+"monitor" service is a health checker that helps to automate the development process.
+
+Note that also by existing convention there should be one server running
+operator + frontend + monitor (called "operator server"),
+and multiple backend servers (called "backend server").
+
+Monitor has to run on the same instance as operator, as it reads cached backend info dumped by the latter.
+
+Note that it was tried to serve frontend content statically from the storage,
+but it is very slow. Looks like serving from a dedicated server has much faster loading speed.
+
+Note that we use "pm2" as a service lifecycle manager on top of npm.
+
+Instructions to run locally (linux/macos):
+
+1. Install npm
+2. Open 3 terminal windows and run (installing is not required on the subsequent runs):
+   2a. cd backend ; npm install; npm start
+   2b. cd operator ; npm install; npm start
+   2c. cd frontend/react ; npm install; npm start
+3. Open localhost:3000 in browser
+4. To stop simply kill with ctrl+c (or close terminal)

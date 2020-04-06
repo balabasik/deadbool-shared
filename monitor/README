@@ -1,0 +1,6 @@
+Monitor service that monitors health of all the connected components,
+and reboots/updates them if needed (e.g., if git repo has been updated).
+
+Monitor does not directly communicate with backend services,
+but reads the cached info dumped by the operator.
+So it is important that monitor and operator run on the same machine.

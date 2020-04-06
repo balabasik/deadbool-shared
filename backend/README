@@ -1,0 +1,4 @@
+Deadbool backend service.
+
+"app.js" is the main nodejs service handling all the correspondence with the external world.
+For each game main process spawns a child worker (executes "worker.js") that handles the actual game.

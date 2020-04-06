@@ -1,0 +1,4 @@
+Operator process. Handles communication between client menu and backend.
+Communicates with backends, does load balancing job when creating new games.
+
+Operator will cache backend info into the "backend_info" directory that will be read by the monitor.

@@ -1,0 +1,21 @@
+Frontend component.
+Deadbool is built on top of reactjs.
+All the relevant code is located in "react" subdirectory.
+"app.js" is used to serve the statically prebuilt react app.
+
+NOTE: Right now there is no way to run full app without a server,
+as it is tightly integrated with the server.
+
+React components (only listing main components):
+
+- globalMain: shim layer connecting game and the more page.
+- more: page with additional info about other games / content.
+- game:
+  - gameMain.js: shim layer connecting menu and the actual game.
+  - gameMenu: menu components
+    - menu.js: main menu file. All other components are instantiated here.
+  - gamePlay: playing components
+    - gamePlay.js: main controller file.
+    - gameFrame.js: rendering on the main game frame.
+    - physics.js: handles all the game control logic.
+    - serverStateFetcher.js: handles all the websocket communications with backend.

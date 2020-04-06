@@ -1,0 +1,417 @@
+package deadbool;
+syntax = "proto3";
+
+// NOTE: This proto file has to be in sync with the frontend version!!!
+// frontend/react/public/gameState.proto
+
+message Message {
+  string type = 1; // [default = ""];
+  string player_id = 2; // [default = ""];
+  bytes data = 3;
+}
+
+/*
+bool left_key = 1; // [default = false];
+bool right_key = 2; // [default = false];
+bool up_key = 3; // [default = false];
+bool down_key = 4; // [default = false];
+bool right_click = 5; // [default = false];
+bool left_click = 6; // [default = false];
+bool magic1 = 7; // [default = false];
+bool magic2 = 8; // [default = false];
+bool magic3 = 9; // [default = false];
+*/
+
+message PlayerKeys {
+  int32 packed_keys = 1;
+  int32 mouse_x = 2; // [default = 0];
+  int32 mouse_y = 3; // [default = 0];
+  int32 mouse_angle = 4; // [default = 0];
+  int32 active_gun = 5; // [default = 0];
+  int32 client_x = 6; // [default = 0];
+  int32 client_y = 7; // [default = 0];
+  float client_speed_x = 8; // [default = 0];
+  float client_speed_y = 9; // [default = 0];
+  int32 time_stamp = 10; // [default = 0];
+}
+
+message ChatMessage {
+  string id = 1;
+  string text = 2;
+  string player = 3;
+  int32 client_time_stamp = 4;
+}
+
+message GameState {
+  int32 time_stamp = 1; // [default = 0];
+  PhysicsStats physics_stats = 2;
+  string game_message = 3; // [default = ""];
+  map<string, Player> players = 4;
+  map<string, Perk> perks = 5;
+  repeated Timer timers = 6;
+  map<string, Sound> sounds = 7;
+}
+
+message YoutubeStats {
+  string active_link = 1; // [default = ""];
+  float init_time = 2; // [default = 0];
+  string active_youtube_player = 3; // [default = ""];
+  int32 active_youtube_timer = 4; // [default = 60000]; // 60 seconds
+}
+
+message ActiveCaster {
+  bool active = 1; // [default = false];
+  string caster = 2; // [default = ""];
+}
+
+message ActiveKiller {
+  bool active = 1; // [default = false];
+  string killer = 2; // [default = ""];
+}
+
+message GameStatus {
+  bool paused = 1; // [default = false];
+  bool show_winners = 2; // [default = false];
+  int32 new_game_time_stamp = 3; // [default = 0];
+}
+
+message ScrambleMapping {
+  // TODO: change mapping to use shuffled array [0..n]
+  string left_key = 1; // [default = ""];
+  string right_key = 2; // [default = ""];
+  string up_key = 3; // [default = ""];
+  string down_key = 4; // [default = ""];
+  string right_click = 5; // [default = ""];
+  string left_click = 6; // [default = ""];
+  string magic1 = 7; // [default = ""];
+  string magic2 = 8; // [default = ""];
+  string magic3 = 9; // [default = ""];
+}
+
+message ScrambleKeys {
+  bool active = 1; // [ default = false ];
+  string killer = 2; // [ default = "" ];
+  ScrambleMapping mapping = 3;
+}
+
+message BulletExtraStyle {
+  string color = 1; // [ default = ""];
+  string background_color = 2; // [default = ""];
+  string border_radius = 3; // [default = ""];
+  string box_shadow = 4; // [default = ""];
+}
+
+message Bullet {
+  BulletStats stats = 1;
+}
+
+message BulletStats {
+  string id = 1; // [default = ""];
+  int32 type = 2; // [default = 0];
+  string src = 3; // [default = "avatars_and_guns/bullet_0.png"];
+  string content = 4; // [default = ""];
+  float strength = 5; // [default = 10];
+  float explosion_radius = 6; // [ default = 0 ];
+  float weight = 7; // [default = 0];
+  string fire_player = 8; // [default = ""];
+  int32 fire_time = 9; // [default = 0];
+  string killer = 10; // [default = ""];
+  int32 time_to_explode = 11; // [default = 10000];
+  bool overwrite_self_bullets_by_server = 12; // [default = false];
+  bool hit_many_players = 13; // [default = false ];
+  bool go_through_walls = 14; // [default = false ];
+  bool flex_color = 15; // [ default = true];
+  BulletExtraStyle extra_style = 16;
+  float cur_x = 17; // [default = 0];
+  float cur_y = 18; // [default = 0];
+  float prev_x = 19; // [default = 0];
+  float prev_y = 20; // [default = 0];
+  bool is_stopped = 21; // [default = false];
+
+  float cur_speed = 22; // [default = 0.9];
+  float cur_angle = 23; // [default = 0];
+
+  float cur_size_x = 24; // [default = 20];
+  float cur_size_y = 25; // [default = 20];
+
+  bool rotatable = 26; // [default = true];
+
+  float horizontal_bounce_damp_factor = 27; // [default = 1];
+  float vertical_bounce_damp_factor = 28; // [default = 1];
+  bool bounce_from_walls = 29; // [default = false];
+}
+
+message GameMessage {
+  string id = 1; // [default = ""];
+  string text = 2; // [default = ""];
+  int32 creation_time = 3; // [default = 0];
+  int32 duration = 4; // [default = 0];
+  int32 priority = 5; // [default = 0];
+}
+
+message Perk {
+  PerkStats stats = 1;
+}
+
+message PerkStats {
+  string id = 1; // [default = ""];
+  string type = 2; // [default = ""];
+  int32 place =3; // [default = 0];
+  repeated float position = 4; // TODO: default [0,0]!
+  float w = 5; // [default = 0];
+  float h = 6; // [default = 0];
+}
+
+message Timer {
+  TimerStats stats = 1;
+}
+
+message TimerStats {
+  int32 init_time_stamp = 1; // [default = 0];
+  int32 dur = 2; // [default = 0];
+  int32 cur = 3; // [default = 0];
+}
+
+message Sound {
+  string id = 1; // [default = ""];
+  string type = 2; // [default = "mp3"];
+  string group = 3; // [default = ""];
+  float x = 4; // [default = 0];
+  float y = 5; // [default = 0];
+  float r = 6; // [default = 100];
+  string src = 7; //[default = ""];
+  int32 duration = 8; // [default = 1000];
+  int32 init_time = 9; // [default = 0];
+  int32 play_from = 10; // [default = 0];
+  float speed_up = 11; // [default = 1];
+  bool global = 12; // [default = false];
+  string target_player = 13; // [default = ""];
+  bool cyclic = 14; // [default = false];
+  bool delete_after_finished = 15; // [default = false];
+  float volume = 16; // [default = 1];
+  bool stop_group = 17; // [default = true];
+}
+
+message Linear {
+  float movex = 1; // [default = 0];
+  float movey = 2; // [default = 0];
+  int32 movet = 3; // [default = 0];
+}
+
+message Transform {
+  float scale_x = 1 ; // [default = 1];
+  float scale_y = 2 ; // [default = 1];
+  float rotate = 3 ; // [default = 0];
+  float move_x = 4 ; // [default = 0];
+  float move_y = 5 ; // [default = 0];
+}
+
+message Geometry {
+  float left_x = 1; // [default = 0];
+  float bottom_y = 2; // [default = 0];
+  float width = 3; // [default = 100];
+  float height = 4; // [default = 100];
+  float pivot_x = 5; // [default = 0];
+  float pivot_y =  6; // [default = 0];
+  Transform transform = 7;
+}
+
+message BoxExtra {
+  string sound = 1; // [default = ""];
+  bool mirror_on_way_back =2; // [default =false];
+  float speed_x =3; // [default = 0];
+  float speed_y =4; // [default = 0];
+  string dest =5; // [default = ""];
+  string clock_font =6; // [default =""];
+  string src =7; // [default = ""];
+  int32 timer_id =8; // [default = 0];
+}
+
+message BoxStyle {
+  string backgroundColor = 1; // [default = ""];
+  string backgroundImage = 2; // [default = ""];
+  string backgroundSize = 3; // [default = ""];
+  string backgroundRepeat = 4; // [default = ""];
+  string backgroundPosition = 5; // [default = ""];
+  string border = 6; // [default = ""];
+  string boxShadow = 7; // [default = ""];
+  string overflow = 8; // [default = ""];
+  int32 borderRadius = 9; // [default = 0];
+  string transform = 10; // [default = ""];
+}
+
+message Box {
+  BoxStats stats = 1;
+}
+
+message BoxStats {
+  string id = 1; // [default = ""];
+  Linear linear = 2;
+  Geometry geometry = 3;
+  string type = 4; // [default = "box"];
+  BoxExtra extra = 5;
+  BoxStyle style = 6;
+  bool interactable = 7; // [default = true];
+  bool side_bump = 8; // [default = false];
+  bool reverse_gravity_bump = 9; // [default = false];
+  bool wall = 10; // [default = false];
+  int32 delete_after = 11; // [default = -1];
+}
+
+message ActiveId {
+  bool active = 1; // [default = false];
+  string id = 2; // [default = ""];
+}
+
+message ActiveTime {
+  bool active = 1; // [default = false];
+  int32 time= 2; // [default = 0];
+}
+
+message Active {
+  bool active = 1; // [default = false];
+}
+
+message ActiveXY {
+  bool active = 1; // [default = false];
+  float x = 2; // [default = 0];
+  float y = 3; // [default = 0];
+}
+
+message PlayerStats {
+  //map<string, float> maxammo = 1; //{ 0: 20, 1: 10 };
+  //float maxhp = 2; // [default = 100];
+  //float heal_rate = 3; // [default = 0.001];
+  //map<string, int32> bullet_reload_time = 4; //{ 0: 100, 1: 350 };
+  //map<string, float> bullet_reload_rate = 5; //{ 0: 0.005, 1: 0.001 };
+  //int32 sit_reload_time = 6; // [default = 7000];
+  //float orig_speed_x = 7; // [default=0.5];
+  //float orig_speed_y = 8; // [default =1.44];
+  //bool is_walking = 9; // [default=false];
+
+  //map<string, int32> magic_id = 10;
+  /*{
+  0: spells[0],
+  1: spells[1],
+  2: spells[2],
+  3: spells[3]
+  };*/
+
+  //map<string, float> magic_reload_time = 11;
+  /*{
+  0: spellList[spells[0]].reloadTime,
+  1: spellList[spells[1]].reloadTime,
+  2: spellList[spells[2]].reloadTime,
+  3: spellList[spells[3]].reloadTime
+  }*/
+
+  map<string, int32> last_magic_time = 12;
+  /*{
+  0: -  magicReloadTime[0],
+  1: -  magicReloadTime[1],
+  2: -  magicReloadTime[2],
+  3: -  magicReloadTime[3]
+  };*/
+
+  int32 frags = 13; // [default = 0];
+  int32 deaths = 14; // [default = 0];
+  int32 lvl = 15; // [default = 1];
+  float exp = 16; // [default = 0];
+
+  ActiveTime force_client_geometry = 17;
+  ActiveId overwrite_player_keys = 18;
+  //ActiveId overwrite_bullet_fire_player = 19;
+  ActiveId overwrite_mouse_angle = 20;
+
+  Active is_copy = 21;
+
+  bool is_dead = 22; // [default = true];
+  //int32 death_time = 23; // [default = -2000];
+  //int32 revive_time = 24; // [default = 0];
+
+  //int32 active_gun = 25; // [default = 0];
+  float hp = 26; // [default = 100];
+  map<string, float> ammo = 27; //{ 0:   maxammo[0], 1:  maxammo[1] };
+  //map<string, int32> last_fire_time = 28 ;
+  /*{
+  0: -  bulletReloadTime[0],
+  1: -  bulletReloadTime[1]
+  }*/
+
+  int32 last_sit_time = 29; // [default = 0];
+
+  //float mouse_angle = 30; // [default = 0];
+  //float mouse_world_x = 31; // [default = 0];
+  //float mouse_world_y = 32; // [default = 0];
+  //float speed_x = 33; // [default = 0];
+  //float speed_y = 34; // [default = 0];
+  //float extra_speed_x = 35; // [default = 0];
+  //float extra_speed_x_decay = 36; // [default = 0.025];
+
+  //float intended_move_x = 37; // [default = 0];
+  //float intended_move_y = 38; // [default = 0];
+
+  map<string, bool> affecting_spells = 39;
+  //bool reflects_bullets = 40; // [default = false];
+  //bool hit_by_bullets = 41; // [default = true];
+  bool invisible = 42; // [default = false];
+  //float orig_dodge_bullets = 43; // [default = 0];
+  //float dodge_bullets = 44; // [default = 0];
+  //float orig_dodge_magic = 45; // [default = 0];
+  //float dodge_magic = 46; // [default = 0];
+  //float critical_hit_prob = 47; // [default = 0];
+  float magic_speed_y = 48; // [default = 0];
+  float magic_speed_x = 49; // [default = 0];
+  //bool shoot_doubles = 50; // [default = false];
+  //bool rebirth_active = 51; // [default = false];
+  bool can_shoot = 52; // [default = true];
+  //float bullets_extra_strength = 53; // [default = 0];
+  //bool jump_and_kill = 54; // [default = false];
+  bool truck_mode = 55; // [default = false];
+  Active fake_eye = 56;
+  bool can_fly = 57; // [default = false];
+  //float frenzy = 58; // [default = 0];
+  //bool emoji_jump = 59; // [default = false];
+  bool can_reload_ammo = 60; // [default = true];
+  //bool prime = 61; // [default = false];
+  //float vampiric = 62; // [default = 0];
+  //float return_damage = 63; // [default = 0];
+  //float shot_to_magic = 64; // [default = 0];
+  bool unbreakable = 65; // [default = false];
+  bool quad_damage = 66; // [default = false];
+  //float pos_x = 67; // [default = 0];
+  //float pos_y = 68; // [default = 0];
+  //ActiveXY teleport_to = 69;
+  //bool on_spring = 70; // [default = false];
+}
+
+message Player {
+  string avatar = 1; // [default = ""];
+  string playerName = 2; // [default = ""];
+  //string playerLink = 3; // [default = ""];
+  //string id = 4; // [default = ""];
+  Geometry geometry = 5;
+  PlayerStats stats = 6;
+  //bool wasDead = 7; // [default = false];
+}
+
+message PhysicsStats {
+  YoutubeStats youtube = 1;
+  int32 last_spell = 2; // [default = -1];
+  bool bullets_stopped = 3; // [default = false];
+  float gravity_g = 4; // [default = 0.0044];
+  map<string, bool> active_spells = 5;
+  bool break_walls = 6; // [default = false];
+  ActiveCaster dark = 7;
+  bool stop_spells = 8; // [default = false];
+  ActiveKiller right_wing = 9;
+  string pickle_rick = 10; // [default = ""];
+  bool lightning_active = 11; // [default = false];
+  bool matrix_active = 12; // [default = false];
+  repeated Bullet new_bullets = 13;
+  map<string, Box> add_extra_boxes = 14;
+  map<string, bool> remove_extra_boxes = 15;
+  ScrambleKeys scramble_keys = 16;
+  // gameStatus is used to determine if the game is over or not
+  GameStatus game_status = 17;
+}
