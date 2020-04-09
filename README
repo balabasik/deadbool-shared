@@ -28,3 +28,8 @@ Instructions to run locally (linux/macos):
    2c. cd frontend/react ; npm install; npm start
 3. Open localhost:3000 in browser
 4. To stop simply kill with ctrl+c (or close terminal)
+
+NOTE: To test Menu/Game UI you don't need to start backend/operator services.
+To test game menu you can simply run "npm start" from frosntend/react directory.
+To test game play you can modify the value of "isGameStarted" to true,
+inside frontend/react/src/game/gameMain.js file, and run "npm start" as before.
